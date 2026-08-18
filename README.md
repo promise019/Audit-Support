@@ -1,173 +1,158 @@
-# 🎓 Computerised Financial Audit Support System (CFASS)
-> **Faculty of Computing · University of Calabar (UNICAL)**  
-> *A modern, audit-ready financial management and automated compliance system for public university administration.*
+# Computerised Financial Audit Support System (CFASS)
+
+**Faculty of Computing, University of Calabar (UNICAL)**  
+*Computerized Financial Audit and Compliance Management System*
 
 ---
 
-## 📌 Read This First! (Student & Presenter Guide)
+## Student & Presenter Overview
 
-Welcome to **CFASS**! This `README.md` is designed as your **pre-flight student guide**. Before launching the software or standing in front of a panel of examiners, deans, or auditors, read through this guide to understand:
-1. What the software does in **plain English** (no technical jargon).
-2. How to explain each feature confidently so you **never fumble**.
-3. How to run a smooth **5-minute live demonstration**.
+This document provides a complete guide for students, presenters, and defense candidates using the Computerised Financial Audit Support System (CFASS). 
+
+Read through this guide before launching the application or presenting the project to an examination panel. It covers:
+1. System purpose and core functionality in non-technical terms.
+2. How to explain each module during a project defense.
+3. A structured 5-minute live demonstration plan.
 
 ---
 
-## 🚀 Quick Start: How to Run the Application
+## Quick Start: Running the Application
 
-If you haven't already started the local server, follow these commands in your terminal:
+To run the application locally, execute the following commands in the project root directory:
 
 ```bash
-# 1. Install project dependencies (if not already done)
+# Install dependencies
 npm install
 
-# 2. Start the Vite local development server
+# Start the development server
 npm run dev
 ```
 
-Once started, open your browser and navigate to:
-👉 **`http://localhost:5173`** (or the URL shown in your terminal).
+After starting the server, open your web browser and navigate to `http://localhost:5173`.
 
 ---
 
-## 🏛️ What is CFASS? (The 30-Second Elevator Pitch)
+## System Overview
 
-> *"CFASS is a specialized software system built for university faculties to replace paper ledgers and error-prone spreadsheets. It automates financial record-keeping, automatically catches bank statement mismatches, prevents unauthorized spending using a 3-step approval chain, and maintains an unalterable digital log of every action taken. It guarantees 100% financial transparency and enforces international public sector accounting rules."*
+CFASS is a specialized web-based application designed for university faculty administration to digitize financial record-keeping, automate compliance checks, and enforce internal financial controls. 
 
----
-
-## 📦 Feature-by-Feature Explanations (Student Cheat Sheet)
-
-```mermaid
-flowchart LR
-    A[1. Auth & Roles] --> B[2. Dashboard]
-    B --> C[3. Chart of Accounts]
-    C --> D[4. Bank Reconciliation]
-    D --> E[5. Budget Variance]
-    E --> F[6. Approval Workflow]
-    F --> G[7. Audit Trail]
-    G --> H[8. Defense Mode]
-```
+It replaces paper-based ledgers and manual spreadsheets with:
+- Automated bank statement reconciliation.
+- Multi-tier payment approval chains.
+- Real-time budget variance tracking.
+- An unalterable digital audit log for complete accountability.
 
 ---
 
-### 1. 🔑 Secure Authentication & Role-Based Access
-* **What it is:** The digital security guard at the door.
-* **How to explain it:** Different users have different permissions based on their job role:
-  * **Data Entry Officer (Chukwuma / Ngozi):** Can record transactions and submit payments, but *cannot* approve them.
-  * **Auditor (Dr. Effiong Bassey):** Can review, flag missing documents, or approve routine transactions.
-  * **Faculty Administrator (Prof. Asuquo Edet / Dean):** Has final sign-off authority for major capital expenses.
-* **Why it matters:** Prevents unauthorized staff from approving their own payments or touching faculty funds.
+## Feature Explanations & Defense Guide
+
+### 1. Role-Based Authentication & Access Control
+- **Description:** Restricts access and functionality based on user roles.
+- **Roles:**
+  - **Data Entry Officer:** Can record financial transactions and submit payment requests, but cannot approve them.
+  - **Auditor:** Can review entries, flag missing documentation, and approve standard transactions.
+  - **Faculty Administrator (Dean):** Has final authorization rights for high-value capital expenditures.
+- **Key Defense Point:** Implements Segregation of Duties so no single user can initiate, authorize, and approve a payment independently.
 
 ---
 
-### 2. 📊 Executive Financial Dashboard
-* **What it is:** The executive control tower.
-* **How to explain it:** Gives the Dean or Auditor an instant 5-second health check of the faculty’s money without reading thick paper reports:
-  * **Total Revenue (Income):** e.g., ₦21,575,000 (FGN Subventions, TETFund research grants, tuition, software consultancy).
-  * **Total Expenditure (Spending):** e.g., ₦16,365,000 (Staff salaries, lab workstations, electricity bills, journal subscriptions).
-  * **Net Financial Balance:** e.g., ₦5,210,000 (Current remaining balance).
-  * **Risk Badges:** Red notification indicators pointing directly to unresolved bank errors and pending approvals.
+### 2. Executive Financial Dashboard
+- **Description:** A high-level overview of faculty financial status.
+- **Key Metrics:**
+  - **Total Revenue:** Summary of all incoming funds (grants, tuition, TETFund allocations, software consulting).
+  - **Total Expenditure:** Summary of all outgoing expenses (salaries, equipment purchases, utility bills).
+  - **Net Balance:** Remaining balance calculated automatically.
+  - **Risk Indicators:** Highlighting unresolved bank statement discrepancies and pending approval requests.
 
 ---
 
-### 3. 📖 Chart of Accounts & General Ledger
-* **What it is:** The digital master record book.
-* **How to explain it:** Every single Naira coming in or going out is categorized under standardized account codes (e.g., `EXP-103` for Lab Equipment, `REV-001` for FGN Grants).
-* **Key Demonstration:** Click **"+ New Transaction"** to show how staff input new entries, select categories, and validate debit/credit figures.
-* **Why it matters:** Enforces double-entry bookkeeping so no money gets misclassified or unaccounted for.
+### 3. Chart of Accounts & General Ledger
+- **Description:** The central financial ledger where all revenue and expenditure entries are categorized.
+- **Functionality:** Uses standardized account codes (such as `EXP-103` for lab equipment and `REV-001` for government subventions). Enforces double-entry validation on all new transactions.
+- **Key Defense Point:** Ensures proper classification and prevents unrecorded or miscategorized transactions.
 
 ---
 
-### 4. 🔄 Automated Bank Reconciliation (Detective Tool)
-* **What it is:** Compares internal faculty books against actual bank statements automatically.
-* **How to explain it:** Show the side-by-side matching view:
-  * 🟢 **Green "Matched":** Internal ledger matches bank statement perfectly.
-  * 🔴 **Red "Discrepancy" (BST-004):** Computer procurement entry says internal ledger paid **₦3,200,000**, but the Bank Statement debited **₦3,150,000** — a **₦50,000 discrepancy**!
-  * 🟠 **Orange "Unmatched" (BST-008):** A bank processing fee of **₦45,000** appears on the bank statement with NO internal receipt or voucher.
-* **Why it matters:** Catches bank errors, hidden bank charges, and missing invoices before money vanishes.
+### 4. Automated Bank Reconciliation
+- **Description:** Automatically compares internal faculty transaction records against bank statements.
+- **Status Identifiers:**
+  - **Matched:** Internal ledger records match bank statement entries exactly.
+  - **Discrepancy:** Flags mismatches between internal voucher figures and bank debit amounts (for example, a ₦50,000 difference on computer procurement entry `BST-004`).
+  - **Unmatched:** Identifies bank deductions that do not have a corresponding internal voucher (such as unrecorded bank fees in entry `BST-008`).
+- **Key Defense Point:** Automatically detects accounting errors, missing invoices, and unauthorized bank deductions.
 
 ---
 
-### 5. 📈 Budget Variance Analysis (Budget Watchdog)
-* **What it is:** Compares what was *budgeted* for the year against what was *actually spent*.
-* **How to explain it:** Visual progress bars track spending for each department line item.
-* **Key Feature:** If spending exceeds the budget allocation by more than **15%**, CFASS automatically flags an **Anomaly Warning** in red.
-* **Why it matters:** Prevents departments from overspending beyond approved limits mid-year.
+### 5. Budget Variance Analysis
+- **Description:** Monitors actual spending against approved annual budget allocations.
+- **Functionality:** Calculates variance percentages per expense line. If actual expenditure exceeds budget allocation by more than 15%, the system automatically flags an Anomaly Warning.
+- **Key Defense Point:** Provides early warning indicators to prevent unapproved budget overruns during the financial year.
 
 ---
 
-### 6. 🌿 Multi-Stage Approval Workflow (Segregation of Duties)
-* **What it is:** The 3-tier authorization chain for payments.
-* **How to explain it:** Implements the **Four-Eyes Principle**. A payment request moves through 3 stages:  
-  `Stage 1: Data Entry Officer` ➔ `Stage 2: Auditor` ➔ `Stage 3: Faculty Administrator / Dean`
-* **Interactive Controls:**
-  * 🟢 **Approve:** Advances request to the next stage or gives final clearance.
-  * 🟡 **Flag for Review:** Pauses approval and logs a note (e.g., "Vendor invoice number missing").
-  * 🔴 **Reject:** Permanently cancels the payment request with a mandatory reason.
+### 6. Multi-Stage Approval Workflow
+- **Description:** A sequential three-stage approval process for financial disbursements:  
+  `Stage 1: Data Entry Officer` -> `Stage 2: Auditor` -> `Stage 3: Faculty Administrator (Dean)`
+- **Available Actions:**
+  - **Approve:** Advances the item to the next stage or completes final authorization.
+  - **Flag for Review:** Pauses approval and records a note requesting additional documentation.
+  - **Reject:** Declines the request permanently with a recorded reason.
+- **Key Defense Point:** Enforces internal control activities in accordance with standard financial management principles.
 
 ---
 
-### 7. 🛡️ Immutable Electronic Audit Trail (System "Black Box")
-* **What it is:** An un-erasable digital log of every single action in the system.
-* **How to explain it:** Point to the table displaying:
-  * **Timestamp:** Exact date and time to the second.
-  * **User & Role:** Who performed the action.
-  * **Action Taken:** e.g., Created Record, Approved Record, Flagged Record.
-  * **IP Address:** Computer identification number (e.g., `10.20.5.210`).
-* **Why it matters:** The audit log is **read-only and append-only**. Nobody—not even an administrator—can edit or delete history. This guarantees **100% accountability (non-repudiation)**.
+### 7. Immutable Electronic Audit Trail
+- **Description:** A read-only event log that automatically records every system activity.
+- **Recorded Data:** Includes exact timestamp, user name, user role, action taken, record reference ID, and user IP address.
+- **Key Defense Point:** The audit trail is append-only and cannot be edited or deleted by any user or administrator, providing non-repudiation and verifiable audit evidence.
 
 ---
 
-### 8. 🎓 Academic Defense Mode Toggle (The Presentation Hero)
-* **What it is:** A built-in presentation switch located in the top navigation bar.
-* **How to explain it:** Toggle it ON to display an amber banner and contextual cards that map every software module directly to its governing international standard:
-  * **Dashboard** ➔ IPSAS 24 (Budget Presentation)
-  * **Chart of Accounts** ➔ IPSAS 1 (Financial Statements) & ISA 500 (Audit Evidence)
-  * **Reconciliation** ➔ ISA 505 (External Confirmations) & ISA 330 (Risk Responses)
-  * **Variance Analysis** ➔ ISA 520 (Analytical Procedures)
-  * **Approval Workflow** ➔ COSO Internal Control Framework & ISA 315
-  * **Audit Trail** ➔ ISA 230 (Audit Documentation) & ISAE 3402
-* **Why it matters:** Proves to examiners that the software strictly adheres to global accounting and auditing standards.
+### 8. Academic Defense Mode
+- **Description:** A toggle feature in the top navigation bar designed for project defense presentations.
+- **Functionality:** Displays contextual information panels explaining the theoretical accounting and auditing standards governing each module:
+  - **Dashboard:** IPSAS 24 (Budget Information Presentation)
+  - **Chart of Accounts:** IPSAS 1 (Financial Statements) & ISA 500 (Audit Evidence)
+  - **Reconciliation:** ISA 505 (External Confirmations) & ISA 330 (Audit Risk Response)
+  - **Variance Analysis:** ISA 520 (Analytical Procedures)
+  - **Approval Workflow:** COSO Internal Control Framework & ISA 315
+  - **Audit Trail:** ISA 230 (Audit Documentation) & ISAE 3402
+- **Key Defense Point:** Demonstrates that the software implementation directly aligns with established international standards.
 
 ---
 
-## 🎬 5-Minute Live Presentation Script (Never Fumble!)
+## Recommended Live Presentation Walkthrough
 
-When presenting to a panel or defense board, follow this simple 5-step script:
+When presenting the project to an examination panel:
 
-1. **Minute 1 — Introduction & Dashboard:**  
-   *"Good day Panel. CFASS brings financial automation and transparency to UNICAL's Faculty of Computing. On this dashboard, you see real-time figures for Revenue, Expenditure, and Net Balance, along with red flags for bank discrepancies."*
-2. **Minute 2 — Chart of Accounts:**  
-   *"Click 'Chart of Accounts'. Here, every transaction is categorized under standardized codes like EXP-103 for computers or REV-002 for TETFund grants. Double-entry rules are enforced automatically."*
-3. **Minute 3 — Bank Reconciliation:**  
-   *"Click 'Reconciliation'. CFASS automatically matches internal books against bank statements. Notice this red badge—it immediately caught a ₦50,000 mismatch between our computer voucher and the bank statement."*
-4. **Minute 4 — Approval Workflow & Audit Trail:**  
-   *"Click 'Approval Workflow'. Money cannot be spent by one person alone. It passes 3 stages: Entry ➔ Auditor ➔ Dean. Now click 'Audit Trail'—every click we just made is permanently logged with timestamps and IP addresses."*
-5. **Minute 5 — Academic Defense Mode (Mic Drop):**  
-   *"Finally, look at the top bar as I turn ON Academic Defense Mode. CFASS maps every module to international IPSAS and ISA standards, proving our software aligns with global auditing frameworks."*
+1. **Introduction & Dashboard:** Open the application and present the Executive Dashboard summary metrics (Revenue, Expenditure, Net Balance, and Risk Indicators).
+2. **General Ledger:** Navigate to the Chart of Accounts and explain how transactions are recorded using standard account codes.
+3. **Bank Reconciliation:** Open the Reconciliation module and point out matched records alongside detected discrepancies (e.g. the ₦50,000 variance and unmatched bank charge).
+4. **Approval Workflow:** Demonstrate the three-stage approval pipeline, showing how payment requests are reviewed, flagged, or approved.
+5. **Audit Trail:** Open the Audit Trail to show that all previous actions have been logged with timestamps and IP addresses.
+6. **Academic Standards:** Toggle Academic Defense Mode ON to show the governing IPSAS and ISA standard references for each module.
 
 ---
 
-## ❓ Frequently Asked Defense Questions & Answers
+## Defense Q&A Reference
 
-| Question | Winning Answer |
+| Question | Suggested Response |
 | :--- | :--- |
-| **"What happens if a user tries to delete an audit log?"** | *"They cannot. The audit trail is architected as an immutable, read-only log. It cannot be altered or erased by any user role."* |
-| **"How does the system prevent unauthorized payments?"** | *"Through Segregation of Duties. Data Entry officers cannot approve payments; approvals require 3 distinct authorization stages up to the Dean."* |
-| **"How does reconciliation detect fraud?"** | *"It compares internal ledger records against external bank statements, instantly flagging mismatched figures or unauthorized bank deductions."* |
-| **"What accounting standards does this system support?"** | *"IPSAS (International Public Sector Accounting Standards) for public reporting and ISA (International Standards on Auditing) for audit compliance."* |
+| **How does the system ensure audit trail integrity?** | The audit log is append-only and read-only. No interface exists to alter or delete logged actions. |
+| **How is segregation of duties enforced?** | Role-based permissions prevent Data Entry Officers from approving payment requests. Approvals require multi-tier clearance. |
+| **What is the purpose of bank reconciliation?** | It cross-verifies internal financial records against external bank records to spot timing differences, bank errors, or unauthorized debits. |
+| **Which standards guide the system design?** | IPSAS (International Public Sector Accounting Standards) for reporting and ISA (International Standards on Auditing) for audit compliance. |
 
 ---
 
-## 📁 Technical Architecture (For Developers & Tech Panelists)
+## System Architecture & Stack
 
-* **Frontend Framework:** React 18 (Vite SPA)
-* **Styling & Design System:** Custom Tailwind CSS with high-contrast slate & brand blue palette
-* **Icons:** Lucide React
-* **State Management:** React Context API (`AuditContext.jsx` acting as centralized single-source-of-truth)
-* **Data Persistence:** In-memory mock ledger (`mockData.js`) pre-populated with realistic UNICAL Faculty of Computing financial records.
+- **Frontend:** React 18 (Vite SPA)
+- **Styling:** Tailwind CSS (Slate and Navy Blue design system)
+- **Icons:** Lucide React
+- **State Management:** React Context API (`AuditContext.jsx`)
+- **Data Source:** Pre-populated financial dataset (`mockData.js`) modeled on University of Calabar faculty accounts.
 
 ---
 
-*CFASS v1.0 · Developed for Faculty of Computing, University of Calabar*
+*CFASS v1.0 — Faculty of Computing, University of Calabar*
