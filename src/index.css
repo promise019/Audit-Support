@@ -1,0 +1,154 @@
+/* =============================================================
+   CFASS — Global Stylesheet
+   Faculty of Computing, University of Calabar
+   ============================================================= */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------- Base resets & typography ---------- */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-slate-950 text-slate-100 font-sans;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* Custom scrollbar for sidebar & tables */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { @apply bg-slate-900; }
+  ::-webkit-scrollbar-thumb { @apply bg-slate-600 rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-slate-500; }
+}
+
+/* ---------- Component utilities ---------- */
+@layer components {
+  /* Glass-morphism card base */
+  .glass-card {
+    @apply bg-slate-800/60 backdrop-blur-sm border border-slate-700/50 rounded-xl;
+  }
+
+  /* Sidebar nav link */
+  .nav-link {
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-400
+           hover:text-white hover:bg-slate-700/60
+           transition-all duration-200 cursor-pointer text-sm font-medium;
+  }
+  .nav-link.active {
+    @apply text-white bg-brand-700/80 border border-brand-600/40;
+  }
+
+  /* KPI metric card */
+  .metric-card {
+    @apply glass-card p-5 flex flex-col gap-1 hover:border-slate-600/70
+           transition-colors duration-200;
+  }
+
+  /* Table styles */
+  .audit-table {
+    @apply w-full text-sm border-collapse;
+  }
+  .audit-table th {
+    @apply px-4 py-3 text-left text-xs font-semibold text-slate-400
+           uppercase tracking-wider bg-slate-900/60 border-b border-slate-700/50;
+  }
+  .audit-table td {
+    @apply px-4 py-3 border-b border-slate-700/30 text-slate-300;
+  }
+  .audit-table tr:hover td {
+    @apply bg-slate-700/20;
+  }
+  .audit-table tr:last-child td { @apply border-b-0; }
+
+  /* Form input */
+  .form-input {
+    @apply w-full bg-slate-900/80 border border-slate-700 rounded-lg px-3 py-2
+           text-slate-200 placeholder-slate-500 text-sm
+           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500
+           transition-colors duration-200;
+  }
+  .form-label {
+    @apply block text-xs font-semibold text-slate-400 mb-1 uppercase tracking-wider;
+  }
+
+  /* Primary button */
+  .btn-primary {
+    @apply bg-brand-600 hover:bg-brand-500 text-white font-semibold
+           px-4 py-2 rounded-lg text-sm transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-brand-400 focus:ring-offset-2
+           focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Secondary button */
+  .btn-secondary {
+    @apply bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium
+           px-4 py-2 rounded-lg text-sm transition-all duration-200
+           border border-slate-600 hover:border-slate-500;
+  }
+
+  /* Success / danger / warning action buttons */
+  .btn-success {
+    @apply bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-400
+           border border-emerald-700/50 hover:border-emerald-600
+           px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200;
+  }
+  .btn-danger {
+    @apply bg-red-600/20 hover:bg-red-600/40 text-red-400
+           border border-red-700/50 hover:border-red-600
+           px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200;
+  }
+  .btn-warn {
+    @apply bg-amber-600/20 hover:bg-amber-600/40 text-amber-400
+           border border-amber-700/50 hover:border-amber-600
+           px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200;
+  }
+
+  /* Defense mode banner */
+  .defense-banner {
+    @apply bg-amber-500/10 border border-amber-500/30 rounded-xl p-4
+           text-amber-300 text-sm animate-fade-in;
+  }
+
+  /* Section header */
+  .section-header {
+    @apply text-lg font-bold text-white mb-1;
+  }
+  .section-sub {
+    @apply text-xs text-slate-400;
+  }
+
+  /* Monospace data display */
+  .mono { @apply font-mono text-xs; }
+
+  /* Progress bar */
+  .progress-bar {
+    @apply h-2 rounded-full bg-slate-700/60 overflow-hidden;
+  }
+  .progress-fill {
+    @apply h-full rounded-full transition-all duration-700;
+  }
+}
+
+/* ---------- Custom animations ---------- */
+@layer utilities {
+  .animate-fade-in { animation: fadeIn 0.3s ease-in-out both; }
+  .animate-slide-in { animation: slideIn 0.3s ease-out both; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+}
