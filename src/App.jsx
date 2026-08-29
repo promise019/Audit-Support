@@ -26,6 +26,7 @@ import Reconciliation   from './components/reconciliation/Reconciliation';
 import VarianceAnalysis from './components/variance/VarianceAnalysis';
 import ApprovalWorkflow from './components/approval/ApprovalWorkflow';
 import AuditTrail       from './components/auditTrail/AuditTrail';
+import ProjectDefenseDocs from './components/docs/ProjectDefenseDocs';
 
 // ─── Module Router ─────────────────────────────────────────────────────────────
 function ModuleRouter() {
@@ -38,6 +39,7 @@ function ModuleRouter() {
     case 'variance':       return <VarianceAnalysis />;
     case 'approval':       return <ApprovalWorkflow />;
     case 'auditTrail':     return <AuditTrail />;
+    case 'docs':           return <ProjectDefenseDocs />;
     default:               return <Dashboard />;
   }
 }

@@ -12,11 +12,14 @@
 
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import {
+  USERS,
   INITIAL_TRANSACTIONS,
   BANK_STATEMENTS,
   BUDGET_LINES,
+  BUDGETS,
   INITIAL_APPROVALS,
   INITIAL_AUDIT_LOG,
+  RECONCILIATIONS,
 } from '../data/mockData';
 import { generateId, nowISO } from '../utils/formatters';
 
@@ -25,20 +28,17 @@ const AuditContext = createContext(null);
 
 // ─── Provider Component ───────────────────────────────────────────────────────
 export function AuditProvider({ children }) {
-  // --- Authentication State ---
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
-  const [currentUser, setCurrentUser] = useState({
-    name: 'Dr. Effiong Bassey',
-    email: 'admin@unical.edu.ng',
-    role: 'Auditor',
-    roleLevel: 1, // 0=DataEntry, 1=Auditor, 2=FacultyAdmin
-    ipAddress: '10.20.5.210',
-  });
+  // --- Authentication State (First screen is always Login) ---
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
   // --- Core State ---
   const [transactions, setTransactions] = useState(INITIAL_TRANSACTIONS);
   const [bankStatements]                = useState(BANK_STATEMENTS);   // read-only (external data)
   const [budgetLines]                   = useState(BUDGET_LINES);       // read-only (planning data)
+  const [budgets]                       = useState(BUDGETS);            // physical schema budgets
+  const [users]                         = useState(USERS);              // physical schema users
+  const [reconciliations]               = useState(RECONCILIATIONS);    // physical schema reconciliations
   const [approvals, setApprovals]       = useState(INITIAL_APPROVALS);
   const [auditLog, setAuditLog]         = useState(INITIAL_AUDIT_LOG);
 
@@ -46,23 +46,74 @@ export function AuditProvider({ children }) {
   const [defenseMode, setDefenseMode]   = useState(false);
   const [activeModule, setActiveModule] = useState('dashboard');
 
+  // ─── Input Validation Engine ──────────────────────────────────────────────
+  /**
+   * validateTransaction — Programmatic validation per Chapter 3.3.2.3 System Controls.
+   * Enforces: COA mask (XXX-NNNN), non-negative debit/credit, required fields.
+   * @param {object} txnData - Raw transaction form data
+   * @returns {{ valid: boolean, errors: string[] }}
+   */
+  const validateTransaction = useCallback((txnData) => {
+    const errors = [];
+    // Rule 1: Description must be non-empty (length 5–200 chars)
+    if (!txnData.description || txnData.description.trim().length < 5) {
+      errors.push('Description is required and must be at least 5 characters.');
+    }
+    if (txnData.description && txnData.description.trim().length > 200) {
+      errors.push('Description must not exceed 200 characters.');
+    }
+    // Rule 2: Debit must be a non-negative number
+    if (txnData.debit === undefined || txnData.debit === null || isNaN(txnData.debit) || Number(txnData.debit) < 0) {
+      errors.push('Debit amount must be a non-negative number (≥ 0.00).');
+    }
+    // Rule 3: Credit must be a non-negative number
+    if (txnData.credit === undefined || txnData.credit === null || isNaN(txnData.credit) || Number(txnData.credit) < 0) {
+      errors.push('Credit amount must be a non-negative number (≥ 0.00).');
+    }
+    // Rule 4: One of debit or credit must be non-zero
+    if (Number(txnData.debit) === 0 && Number(txnData.credit) === 0) {
+      errors.push('Either Debit or Credit amount must be greater than zero.');
+    }
+    // Rule 5: Both debit and credit cannot be non-zero simultaneously
+    if (Number(txnData.debit) > 0 && Number(txnData.credit) > 0) {
+      errors.push('Debit and Credit cannot both be non-zero for a single entry.');
+    }
+    // Rule 6: COA code format mask — must match pattern (e.g. REV-001 or COA-1001)
+    if (txnData.accountCode && !/^[A-Z]{2,4}-\d{3,4}$/.test(txnData.accountCode.trim())) {
+      errors.push('Account Code must match format XXX-NNNN (e.g. COA-1001, REV-001).');
+    }
+    // Rule 7: Date must be valid ISO format (YYYY-MM-DD)
+    if (txnData.date && isNaN(new Date(txnData.date).getTime())) {
+      errors.push('Date must be a valid date in YYYY-MM-DD format.');
+    }
+    return { valid: errors.length === 0, errors };
+  }, []);
+
   // ─── Audit Trail Helper ───────────────────────────────────────────────────
   /**
    * addAuditEvent — Appends an immutable log entry to the audit trail.
    * Every financial action in the system calls this function.
    * This ensures full traceability as required by ISA 230.
    */
-  const addAuditEvent = useCallback((action, recordRef, description, outcome = 'Success', userObj = currentUser) => {
+  const addAuditEvent = useCallback((action, recordRef, description, outcome = 'Success', userObj = currentUser, module = 'System') => {
+    const actionTypeMap = {
+      'Created Record': 'CREATE', 'Approved Record': 'APPROVE', 'Final Approval Granted': 'APPROVE',
+      'Flagged Record': 'FLAG', 'Rejected Record': 'REJECT', 'Submitted for Approval': 'SUBMIT',
+      'User Authentication': 'AUTH', 'User Logout': 'AUTH', 'Reconciliation Run': 'RECONCILE',
+    };
+    const actor = userObj || { name: 'System User', role: 'Staff', ipAddress: '127.0.0.1', user_id: 'USR-SESS' };
     const newEvent = {
-      id: generateId('AUD'),
+      id: generateId('AUD'),      log_id: generateId('AUD'),
       timestamp: nowISO(),
-      user: userObj.name,
-      role: userObj.role,
-      action,
+      user: actor.name || 'System User',         user_id: actor.user_id || 'USR-SESS',
+      role: actor.role || 'Staff',
+      action,                     action_type: actionTypeMap[action] || 'UPDATE',
+      module,
       recordRef,
       description,
+      details: description,
       outcome,
-      ipAddress: userObj.ipAddress,
+      ipAddress: actor.ipAddress || '127.0.0.1', ip_address: actor.ipAddress || '127.0.0.1',
     };
     // Prepend to show most recent first
     setAuditLog(prev => [newEvent, ...prev]);
@@ -83,13 +134,17 @@ export function AuditProvider({ children }) {
   }, [addAuditEvent]);
 
   const logout = useCallback(() => {
-    addAuditEvent(
-      'User Logout',
-      'AUTH-SESSION',
-      `User ${currentUser.name} (${currentUser.role}) logged out of system`,
-      'Success'
-    );
+    if (currentUser) {
+      addAuditEvent(
+        'User Logout',
+        'AUTH-SESSION',
+        `User ${currentUser.name} (${currentUser.role}) logged out of system`,
+        'Success',
+        currentUser
+      );
+    }
     setIsAuthenticated(false);
+    setCurrentUser(null);
   }, [currentUser, addAuditEvent]);
 
   // ─── Transaction Mutations ────────────────────────────────────────────────
@@ -98,24 +153,36 @@ export function AuditProvider({ children }) {
    * Automatically generates a reference ID and writes an audit event.
    */
   const addTransaction = useCallback((txnData) => {
+    // ── Programmatic validation (Chapter 3.3.2.3 System Controls) ──
+    const { valid, errors } = validateTransaction(txnData);
+    if (!valid) {
+      const errorMsg = errors.join(' | ');
+      addAuditEvent('Created Record', 'VALIDATION-FAIL', `VALIDATION FAILED: ${errorMsg}`, 'Error — Rejected by System', currentUser, 'Transactions');
+      throw new Error(errorMsg);
+    }
     const id = generateId('TXN');
     const newTxn = {
-      id,
+      id,                     txn_id: id,
       ...txnData,
+      coa_code: txnData.accountCode, // mirror physical schema field
       status: 'Pending',
       enteredBy: `${currentUser.name} (${currentUser.role})`,
-      approvedBy: null,
-      balance: 0, // Simplified; in production this would recalculate the running balance
+      created_by: currentUser.user_id || 'USR-SESS',
+      approvedBy: null,       approved_by: null,
+      timestamp: nowISO(),
+      balance: 0, // Simplified; production recalculates the running balance
     };
     setTransactions(prev => [newTxn, ...prev]);
     addAuditEvent(
       'Created Record',
       id,
       `New ${txnData.category} entry: "${txnData.description}" — ${txnData.debit > 0 ? 'Debit' : 'Credit'} ₦${(txnData.debit || txnData.credit).toLocaleString()}`,
-      'Success — Pending Approval'
+      'Success — Pending Approval',
+      currentUser,
+      'Transactions'
     );
     return id;
-  }, [currentUser, addAuditEvent]);
+  }, [currentUser, addAuditEvent, validateTransaction]);
 
   /**
    * updateTransactionStatus — Changes the status of an existing transaction.
@@ -221,10 +288,14 @@ export function AuditProvider({ children }) {
     login,
     logout,
     currentUser,
-    // Data
+    // Data (core)
     transactions, bankStatements, budgetLines, approvals, auditLog,
+    // Data (physical schema — Chapter 3.3.2.2)
+    users, budgets, reconciliations,
     // Computed
     totalRevenue, totalExpenditure, netBalance, discrepancyCount, pendingApprovals,
+    // Validation
+    validateTransaction,
     // Transaction actions
     addTransaction, updateTransactionStatus,
     // Approval actions

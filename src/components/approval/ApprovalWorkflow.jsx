@@ -122,7 +122,7 @@ function ApprovalCard({ apr }) {
 
   const isComplete   = apr.currentStage >= 3;
   const isRejected   = apr.rejected;
-  const isActionable = apr.currentStage === currentUser.roleLevel && !isComplete && !isRejected;
+  const isActionable = apr.currentStage === (currentUser?.roleLevel ?? -1) && !isComplete && !isRejected;
   const priorityColors = {
     Urgent: 'border-l-red-500',
     High:   'border-l-amber-500',
@@ -294,7 +294,7 @@ export default function ApprovalWorkflow() {
             Multi-Level Approval Workflow
           </h1>
           <p className="section-sub">
-            3-stage authorization pipeline · Acting as: <strong className="text-brand-400">{currentUser.role}</strong>
+            3-stage authorization pipeline · Acting as: <strong className="text-brand-400">{currentUser?.role || 'Guest'}</strong>
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs text-slate-500 shrink-0">
@@ -317,7 +317,7 @@ export default function ApprovalWorkflow() {
             <React.Fragment key={idx}>
               <div className="flex-1 flex flex-col items-center text-center">
                 <div className={`px-3 py-2 rounded-lg border w-full
-                  ${idx === currentUser.roleLevel
+                  ${idx === (currentUser?.roleLevel ?? -1)
                     ? 'bg-brand-700/40 border-brand-600/50 text-brand-300'
                     : 'bg-slate-800/60 border-slate-700/40 text-slate-500'}`}>
                   <div className="text-xs font-bold">{stage.label}</div>
@@ -331,7 +331,7 @@ export default function ApprovalWorkflow() {
           ))}
         </div>
         <div className="text-xs text-slate-600 mt-2 text-center">
-          Your current role (<strong className="text-brand-400">{currentUser.role}</strong>) is highlighted
+          Your current role (<strong className="text-brand-400">{currentUser?.role || 'Guest'}</strong>) is highlighted
         </div>
       </div>
 

@@ -12,7 +12,7 @@
 import React from 'react';
 import {
   LayoutDashboard, BookOpen, GitCompare, TrendingUp,
-  GitBranch, Shield, ChevronRight, Users, X, LogOut
+  GitBranch, Shield, ChevronRight, Users, X, LogOut, BookMarked
 } from 'lucide-react';
 import { useAudit } from '../../context/AuditContext';
 
@@ -24,6 +24,11 @@ const NAV_ITEMS = [
   { id: 'variance',        label: 'Variance Analysis',   Icon: TrendingUp,      desc: 'Budget vs Actual'          },
   { id: 'approval',        label: 'Approval Workflow',   Icon: GitBranch,       desc: 'Multi-Level Auth'          },
   { id: 'auditTrail',      label: 'Audit Trail',         Icon: Shield,          desc: 'Immutable Log'             },
+];
+
+// Academic documentation section
+const DOC_ITEMS = [
+  { id: 'docs', label: 'Project Defense & Docs', Icon: BookMarked, desc: 'Chapter 3 & 4' },
 ];
 
 /**
@@ -116,6 +121,34 @@ export default function Sidebar({ mobileOpen, onMobileClose }) {
             </button>
           );
         })}
+
+        {/* ─── Academic Documentation Section ─────────────────── */}
+        <div className="text-xs font-semibold text-slate-600 uppercase tracking-wider px-3 mb-2 mt-4 pt-3 border-t border-slate-700/40">
+          Academic Documentation
+        </div>
+        {DOC_ITEMS.map(({ id, label, Icon, desc }) => {
+          const isActive = activeModule === id;
+          return (
+            <button
+              key={id}
+              onClick={() => handleNav(id)}
+              id={`nav-${id}`}
+              aria-current={isActive ? 'page' : undefined}
+              className={`nav-link w-full text-left group relative ${isActive ? 'active' : ''}`}
+            >
+              <Icon size={16} className="shrink-0" />
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-medium leading-tight">{label}</div>
+                <div className={`text-xs leading-tight mt-0.5 ${isActive ? 'text-brand-300' : 'text-slate-600 group-hover:text-slate-500'}`}>
+                  {desc}
+                </div>
+              </div>
+              {isActive && (
+                <ChevronRight size={14} className="shrink-0 text-brand-400" />
+              )}
+            </button>
+          );
+        })}
       </nav>
 
       {/* ─── Current User / Session & Logout ─────────────────── */}
@@ -126,8 +159,8 @@ export default function Sidebar({ mobileOpen, onMobileClose }) {
             <Users size={14} className="text-white" />
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-xs font-semibold text-white truncate">{currentUser.name}</div>
-            <div className="text-xs text-slate-500 truncate">{currentUser.role}</div>
+            <div className="text-xs font-semibold text-white truncate">{currentUser?.name || 'Authorized User'}</div>
+            <div className="text-xs text-slate-500 truncate">{currentUser?.role || 'Authenticated Session'}</div>
           </div>
           <button
             onClick={logout}
@@ -138,7 +171,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }) {
           </button>
         </div>
         <div className="mt-2 text-[10px] text-slate-600 font-mono truncate">
-          IP: {currentUser.ipAddress} · {currentUser.email}
+          IP: {currentUser?.ipAddress || '127.0.0.1'} · {currentUser?.email || 'authenticated'}
         </div>
       </div>
     </div>

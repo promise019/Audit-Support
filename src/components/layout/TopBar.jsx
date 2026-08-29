@@ -21,6 +21,7 @@ const MODULE_LABELS = {
   variance:       'Variance Analysis & Anomaly Detection',
   approval:       'Multi-Level Approval Workflow',
   auditTrail:     'Immutable Electronic Audit Trail',
+  docs:           'Project Defense & Chapter Documentation',
 };
 
 /**
